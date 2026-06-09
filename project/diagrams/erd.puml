@@ -1,0 +1,72 @@
+@startuml Performance Review System ERD
+
+!define TABLE(name) entity name << (T,#FFAAAA) >>
+!define PRIMARY_KEY(x) <b>x</b>
+!define FOREIGN_KEY(x) <i>x</i>
+
+skinparam linetype ortho
+skinparam shadowing false
+
+TABLE(users) {
+    PRIMARY_KEY(id) : INTEGER
+    --
+    username : TEXT <<unique>>
+    password : TEXT
+    name : TEXT
+    role : TEXT
+    status : TEXT
+    tier_level : INTEGER
+    FOREIGN_KEY(manager_id) : INTEGER
+    created_date : DATETIME
+}
+
+TABLE(reviews) {
+    PRIMARY_KEY(id) : INTEGER
+    --
+    FOREIGN_KEY(employee_id) : INTEGER
+    FOREIGN_KEY(reviewer_id) : INTEGER
+    punctuality : INTEGER
+    teamwork : INTEGER
+    productivity : INTEGER
+    leadership : INTEGER
+    vision : INTEGER
+    managerial_skills : INTEGER
+    comments : TEXT
+    status : TEXT
+    created_date : DATETIME
+}
+
+TABLE(goals) {
+    PRIMARY_KEY(id) : INTEGER
+    --
+    FOREIGN_KEY(employee_id) : INTEGER
+    FOREIGN_KEY(creator_id) : INTEGER
+    description : TEXT
+    status : TEXT
+    created_date : DATETIME
+}
+
+TABLE(training_recommendations) {
+    PRIMARY_KEY(id) : INTEGER
+    --
+    FOREIGN_KEY(recipient_id) : INTEGER
+    FOREIGN_KEY(recommender_id) : INTEGER
+    course_name : TEXT
+    created_date : DATETIME
+}
+
+TABLE(courses) {
+    PRIMARY_KEY(id) : INTEGER
+    --
+    name : TEXT <<unique>>
+}
+
+users ||--o{ users : manager_id
+users ||--o{ reviews : employee_id
+users ||--o{ reviews : reviewer_id
+users ||--o{ goals : employee_id
+users ||--o{ goals : creator_id
+users ||--o{ training_recommendations : recipient_id
+users ||--o{ training_recommendations : recommender_id
+
+@enduml

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance System - ERD</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #7f8c8d;
+            text-align: center;
+            font-weight: normal;
+            margin-bottom: 30px;
+        }
+
+        .mermaid {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .legend {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .legend-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .legend-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #e8f4f8;
+        }
+
+        .pk {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .fk {
+            color: #9b59b6;
+            font-style: italic;
+        }
+
+        .code-box {
+            background: #2d3436;
+            color: #00ff88;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        .code-box h3 {
+            color: #74b9ff;
+            margin-bottom: 15px;
+        }
+
+        .code-box pre {
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📊 Entity Relationship Diagram</h1>
+        <h2>Performance Review System Database</h2>
+
+        <div class="mermaid">
+            erDiagram
+            USERS {
+            INTEGER id PK
+            TEXT username UK
+            TEXT password
+            TEXT name
+            TEXT role
+            TEXT status
+            INTEGER tier_level
+            INTEGER manager_id FK
+            }
+
+            REVIEWS {
+            INTEGER id PK
+            INTEGER employee_id FK
+            INTEGER reviewer_id FK
+            INTEGER punctuality
+            INTEGER teamwork
+            INTEGER productivity
+            INTEGER leadership
+            INTEGER vision
+            INTEGER managerial_skills
+            TEXT comments
+            TEXT status
+            DATETIME created_date
+            }
+
+            GOALS {
+            INTEGER id PK
+            INTEGER employee_id FK
+            INTEGER creator_id FK
+            TEXT description
+            TEXT status
+            DATETIME created_date
+            }
+
+            TRAINING_RECOMMENDATIONS {
+            INTEGER id PK
+            INTEGER recipient_id FK
+            INTEGER recommender_id FK
+            TEXT course_name
+            DATETIME created_date
+            }
+
+            COURSES {
+            INTEGER id PK
+            TEXT name UK
+            }
+
+            USERS ||--o{ USERS : "manager_id"
+            USERS ||--o{ REVIEWS : "employee_id"
+            USERS ||--o{ REVIEWS : "reviewer_id"
+            USERS ||--o{ GOALS : "employee_id"
+            USERS ||--o{ GOALS : "creator_id"
+            USERS ||--o{ TRAINING_RECOMMENDATIONS : "recipient_id"
+            USERS ||--o{ TRAINING_RECOMMENDATIONS : "recommender_id"
+        </div>
+
+        <div class="legend">
+            <div class="legend-card">
+                <h3>📋 Table Descriptions</h3>
+                <table>
+                    <tr>
+                        <th>Table</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td>USERS</td>
+                        <td>All system users (Admin, Employee, Manager)</td>
+                    </tr>
+                    <tr>
+                        <td>REVIEWS</td>
+                        <td>Performance reviews with 6 score categories</td>
+                    </tr>
+                    <tr>
+                        <td>GOALS</td>
+                        <td>Employee goals and objectives</td>
+                    </tr>
+                    <tr>
+                        <td>TRAINING_RECOMMENDATIONS</td>
+                        <td>Training suggestions</td>
+                    </tr>
+                    <tr>
+                        <td>COURSES</td>
+                        <td>Available training courses</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="legend-card">
+                <h3>🔗 Relationships</h3>
+                <table>
+                    <tr>
+                        <th>From → To</th>
+                        <th>Type</th>
+                    </tr>
+                    <tr>
+                        <td>USERS → USERS</td>
+                        <td>Self-reference (hierarchy)</td>
+                    </tr>
+                    <tr>
+                        <td>USERS → REVIEWS</td>
+                        <td>One-to-Many</td>
+                    </tr>
+                    <tr>
+                        <td>USERS → GOALS</td>
+                        <td>One-to-Many</td>
+                    </tr>
+                    <tr>
+                        <td>USERS → TRAINING</td>
+                        <td>One-to-Many</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="code-box">
+            <h3>📝 Mermaid Code (Copy to mermaid.live)</h3>
+            <pre>
+erDiagram
+    USERS ||--o{ USERS : "manager_id"
+    USERS ||--o{ REVIEWS : "employee_id"
+    USERS ||--o{ REVIEWS : "reviewer_id"
+    USERS ||--o{ GOALS : "employee_id"
+    USERS ||--o{ GOALS : "creator_id"
+    USERS ||--o{ TRAINING_RECOMMENDATIONS : "recipient_id"
+    
+    USERS {
+        INTEGER id PK
+        TEXT username UK
+        TEXT password
+        TEXT name
+        TEXT role
+        TEXT status
+        INTEGER tier_level
+        INTEGER manager_id FK
+    }
+    
+    REVIEWS {
+        INTEGER id PK
+        INTEGER employee_id FK
+        INTEGER reviewer_id FK
+        INTEGER punctuality
+        INTEGER teamwork
+        INTEGER productivity
+        INTEGER leadership
+        INTEGER vision
+        INTEGER managerial_skills
+        TEXT comments
+    }
+    
+    GOALS {
+        INTEGER id PK
+        INTEGER employee_id FK
+        INTEGER creator_id FK
+        TEXT description
+        TEXT status
+    }
+    
+    TRAINING_RECOMMENDATIONS {
+        INTEGER id PK
+        INTEGER recipient_id FK
+        INTEGER recommender_id FK
+        TEXT course_name
+    }
+    
+    COURSES {
+        INTEGER id PK
+        TEXT name UK
+    }
+            </pre>
+        </div>
+    </div>
+
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#3498db', primaryTextColor: '#fff', primaryBorderColor: '#2980b9', lineColor: '#7f8c8d', secondaryColor: '#ecf0f1', tertiaryColor: '#fff' } });</script>
+</body>
+
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance System - UML Class Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #7f8c8d;
+            text-align: center;
+            font-weight: normal;
+            margin-bottom: 30px;
+        }
+
+        .mermaid {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .code-box {
+            background: #2d3436;
+            color: #00ff88;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        .code-box h3 {
+            color: #74b9ff;
+            margin-bottom: 15px;
+        }
+
+        .code-box pre {
+            font-family: 'Consolas', monospace;
+            font-size: 0.8em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📐 UML Class Diagram</h1>
+        <h2>Performance Review System Architecture</h2>
+
+        <div class="mermaid">
+            classDiagram
+            direction LR
+
+            class User {
+            &lt;&lt;abstract&gt;&gt;
+            -String username
+            -String password
+            -String name
+            -UserStatus status
+            -UserRole role
+            -int tierLevel
+            -User manager
+            +getUsername() String
+            +getPassword() String
+            +getName() String
+            +getRole() UserRole
+            +getTierLevel() int
+            +getManager() User
+            +getDirectReports() List
+            }
+
+            class Admin {
+            +Admin(username, password, name)
+            }
+
+            class Employee {
+            +Employee(username, password, name)
+            }
+
+            class Manager {
+            +Manager(username, password, name)
+            }
+
+            class Review {
+            -User employee
+            -User reviewer
+            -int punctualityScore
+            -int teamworkScore
+            -int productivityScore
+            -int leadershipScore
+            -int visionScore
+            -int managerialSkillsScore
+            -String comments
+            +calculateTotalScore() int
+            +getEmployee() User
+            +getReviewer() User
+            }
+
+            class Goal {
+            -User employee
+            -User creator
+            -String description
+            -String status
+            +getEmployee() User
+            +getCreator() User
+            +getDescription() String
+            }
+
+            class TrainingRecommendation {
+            -User recommender
+            -User recipient
+            -String courseName
+            +getRecommender() User
+            +getRecipient() User
+            +getCourseName() String
+            }
+
+            class UserRole {
+            &lt;&lt;enumeration&gt;&gt;
+            ADMIN
+            EMPLOYEE
+            MANAGER_EMPLOYEE
+            HIGHBOARD_MANAGER
+            }
+
+            class UserStatus {
+            &lt;&lt;enumeration&gt;&gt;
+            ACTIVE
+            PENDING
+            SUSPENDED
+            }
+
+            class DataStore {
+            &lt;&lt;singleton&gt;&gt;
+            -List users
+            -List reviews
+            -List goals
+            +getInstance() DataStore
+            +authenticate() User
+            +addUser() void
+            +addReview() void
+            +saveData() void
+            }
+
+            class DatabaseManager {
+            &lt;&lt;singleton&gt;&gt;
+            -Connection connection
+            +getInstance() DatabaseManager
+            +saveUser() void
+            +getAllUsers() List
+            +saveReview() void
+            }
+
+            User <|-- Admin : extends User <|-- Employee : extends User <|-- Manager : extends User "1" --> "0..*" User
+                : manages
+                User --> UserRole : has
+                User --> UserStatus : has
+
+                Review "*" --> "1" User : employee
+                Review "*" --> "1" User : reviewer
+
+                Goal "*" --> "1" User : employee
+                Goal "*" --> "1" User : creator
+
+                TrainingRecommendation "*" --> "1" User : recipient
+                TrainingRecommendation "*" --> "1" User : recommender
+
+                DataStore --> User : manages
+                DataStore --> Review : stores
+                DataStore --> Goal : stores
+                DatabaseManager --> DataStore : persists
+        </div>
+
+        <div class="code-box">
+            <h3>📝 Mermaid Code (Copy to mermaid.live)</h3>
+            <pre>
+classDiagram
+    direction LR
+    
+    class User {
+        &lt;&lt;abstract&gt;&gt;
+        -String username
+        -String password
+        -String name
+        -UserRole role
+        -int tierLevel
+        +getUsername() String
+        +getPassword() String
+        +getRole() UserRole
+    }
+    
+    class Admin {
+        +Admin(username, password, name)
+    }
+    
+    class Employee {
+        +Employee(username, password, name)
+    }
+    
+    class Review {
+        -User employee
+        -User reviewer
+        -int punctualityScore
+        -int teamworkScore
+        -int productivityScore
+        -int leadershipScore
+        +calculateTotalScore() int
+    }
+    
+    class Goal {
+        -User employee
+        -User creator
+        -String description
+        -String status
+    }
+    
+    class UserRole {
+        &lt;&lt;enumeration&gt;&gt;
+        ADMIN
+        EMPLOYEE
+        MANAGER_EMPLOYEE
+        HIGHBOARD_MANAGER
+    }
+    
+    class DataStore {
+        &lt;&lt;singleton&gt;&gt;
+        +getInstance() DataStore
+        +addUser() void
+        +addReview() void
+    }
+    
+    User &lt;|-- Admin
+    User &lt;|-- Employee
+    User "1" --> "*" User : manages
+    Review "*" --> "1" User : employee
+    Goal "*" --> "1" User : employee
+    DataStore --> User : manages
+            </pre>
+        </div>
+    </div>
+
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#27ae60', primaryTextColor: '#fff', primaryBorderColor: '#1e8449', lineColor: '#7f8c8d' } });</script>
+</body>
+
+</html>

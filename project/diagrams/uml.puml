@@ -1,0 +1,190 @@
+@startuml Performance Review System UML
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+' Enums
+enum UserRole {
+    ADMIN
+    EMPLOYEE
+    MANAGER_EMPLOYEE
+    HIGHBOARD_MANAGER
+}
+
+enum UserStatus {
+    ACTIVE
+    PENDING
+    SUSPENDED
+}
+
+' Abstract User class
+abstract class User {
+    - username : String
+    - password : String
+    - name : String
+    - status : UserStatus
+    - role : UserRole
+    - tierLevel : int
+    - manager : User
+    - directReports : List<User>
+    --
+    + getUsername() : String
+    + getName() : String
+    + getPassword() : String
+    + checkPassword(input : String) : boolean
+    + getRole() : UserRole
+    + setRole(role : UserRole) : void
+    + getTierLevel() : int
+    + setTierLevel(tier : int) : void
+    + getManager() : User
+    + setManager(manager : User) : void
+    + getDirectReports() : List<User>
+    + addDirectReport(user : User) : void
+}
+
+' Concrete User classes
+class Admin {
+    + Admin(username, password, name)
+    + createUser(user : User) : void
+    + deleteUser(user : User) : void
+    + assignHierarchy() : void
+}
+
+class Employee {
+    + Employee(username, password, name)
+}
+
+class Manager {
+    + Manager(username, password, name)
+}
+
+' Review class
+class Review {
+    - employee : User
+    - reviewer : User
+    - punctualityScore : int
+    - teamworkScore : int
+    - productivityScore : int
+    - leadershipScore : int
+    - visionScore : int
+    - managerialSkillsScore : int
+    - comments : String
+    - status : String
+    - createdDate : Date
+    --
+    + Review(employee, reviewer)
+    + calculateTotalScore() : int
+    + getEmployee() : User
+    + getReviewer() : User
+    + getPunctualityScore() : int
+    + setPunctualityScore(score : int) : void
+    + getLeadershipScore() : int
+    + setLeadershipScore(score : int) : void
+}
+
+' Goal class
+class Goal {
+    - employee : User
+    - creator : User
+    - description : String
+    - status : String
+    - createdDate : Date
+    --
+    + Goal(employee, description, creator)
+    + getEmployee() : User
+    + getCreator() : User
+    + getDescription() : String
+    + getStatus() : String
+    + setStatus(status : String) : void
+}
+
+' Training Recommendation
+class TrainingRecommendation {
+    - recommender : User
+    - recipient : User
+    - courseName : String
+    - dateRecommended : LocalDate
+    --
+    + TrainingRecommendation(recommender, recipient, courseName)
+    + getRecommender() : User
+    + getRecipient() : User
+    + getCourseName() : String
+}
+
+' Singleton classes
+class DataStore <<Singleton>> {
+    - {static} instance : DataStore
+    - users : List<User>
+    - reviews : List<Review>
+    - goals : List<Goal>
+    - trainingRecommendations : List<TrainingRecommendation>
+    --
+    + {static} getInstance() : DataStore
+    + authenticate(username, password) : User
+    + getUsers() : List<User>
+    + addUser(user : User) : void
+    + addReview(review : Review) : void
+    + getReviewsForUser(user : User) : List<Review>
+    + addGoal(goal : Goal) : void
+    + saveData() : void
+}
+
+class DatabaseManager <<Singleton>> {
+    - {static} instance : DatabaseManager
+    - connection : Connection
+    --
+    + {static} getInstance() : DatabaseManager
+    + saveUser(user : User) : void
+    + getAllUsers() : List<User>
+    + saveReview(review : Review) : void
+    + getAllReviews(userMap) : List<Review>
+    + saveGoal(goal : Goal) : void
+    + close() : void
+}
+
+class PerformanceCalculator <<Service>> {
+    + {static} calculateScore(user : User) : ScoreResult
+    - {static} calculateEmployeeScore(user) : ScoreResult
+    - {static} calculateManagerScore(user) : ScoreResult
+    - {static} calculateHighboardScore(user) : ScoreResult
+}
+
+class ScoreResult <<Data>> {
+    + punctuality : double
+    + teamwork : double
+    + productivity : double
+    + overall : double
+    + breakdown : String
+    + missingCategories : List<String>
+}
+
+' Inheritance
+User <|-- Admin
+User <|-- Employee  
+User <|-- Manager
+
+' Associations
+User --> UserRole : has
+User --> UserStatus : has
+User "0..1" --> "*" User : manages
+
+Review "*" --> "1" User : employee
+Review "*" --> "0..1" User : reviewer
+
+Goal "*" --> "1" User : employee
+Goal "*" --> "0..1" User : creator
+
+TrainingRecommendation "*" --> "1" User : recipient
+TrainingRecommendation "*" --> "0..1" User : recommender
+
+' Dependencies
+DataStore ..> User
+DataStore ..> Review
+DataStore ..> Goal
+DataStore ..> TrainingRecommendation
+
+DatabaseManager ..> DataStore
+PerformanceCalculator ..> Review
+PerformanceCalculator ..> ScoreResult
+
+@enduml
